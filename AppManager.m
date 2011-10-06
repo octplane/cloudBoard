@@ -6,16 +6,10 @@
 @implementation AppManager
 
 -(void)awakeFromNib{
-
+    
     [window center];
     [window setReleasedWhenClosed:NO];
-        
-    // Set Monaco font
-    [textField setTypingAttributes: 
-    	[NSDictionary dictionaryWithObject:
-        	[NSFont fontWithName:@"Monaco" size:11.0] forKey:NSFontAttributeName
-     	]
-    ];
+    
     NSLog(@"Registering hotkey");
     
 	DDHotKeyCenter * c = [[DDHotKeyCenter alloc] init];
@@ -40,38 +34,24 @@
 }
 
 - (void) hotkeyWithEvent:(NSEvent *)hkEvent {
-    [urlLabel setStringValue: @"Mooh"];
-}
-
-// Open file dialog and load the text into the select box
-- (IBAction)openDocument:(id)sender{
-    int i; // Loop counter.
+    NSPasteboard * pasteboard = [NSPasteboard generalPasteboard];
+    NSArray *classArray = [NSArray arrayWithObject:[NSString class]];
+    NSDictionary *options = [NSDictionary dictionary];
     
-    // Create the File Open Dialog class.
-    NSOpenPanel* openDlg = [NSOpenPanel openPanel];
-    
-    // Enable the selection of files in the dialog.
-    [openDlg setCanChooseFiles:YES];
-    
-    // Enable the selection of directories in the dialog.
-    [openDlg setCanChooseDirectories:NO];
-    
-    // Display the dialog.  If the OK button was pressed,
-    // process the files.
-    if ( [openDlg runModalForDirectory:nil file:nil] == NSOKButton )
+    BOOL ok = [pasteboard canReadObjectForClasses:classArray options:options];
+    if(ok)
     {
-        // Get an array containing the full filenames of all
-        // files and directories selected.
-        NSArray* files = [openDlg filenames];
+        NSArray *objectsToPaste = [pasteboard readObjectsForClasses:classArray options:options];
+        NSString *text = [objectsToPaste objectAtIndex:0];
+        [progressDings setHidden: (BOOL) NO];
+        [progressDings startAnimation: (NSButton *)clickOpenButton];
         
-        // Loop through all the files and process them.
-        for( i = 0; i < [files count]; i++ )
-        {
-            NSString* fileName = [files objectAtIndex:i];
-            NSString* content = [[NSString alloc] initWithContentsOfFile:fileName];
-            [textField setString:content];
-            [content release];
-        }
+        [self postText: text];
+        
+        // Hide indicator
+        [progressDings stopAnimation: (NSButton*) clickOpenButton];
+        [progressDings setHidden: (BOOL) YES];        
+        
     }
 }
 
@@ -81,61 +61,53 @@
     [[NSWorkspace sharedWorkspace] openURL: url];
 }
 
-
-- (IBAction)sendText:(NSButton*)sender {
-    // Show indicator
-    [progressDings setHidden: (BOOL) NO];
-    [progressDings startAnimation: (NSButton*) sender];
+- (void)postText:(NSString *)text {
+    // API Basepoint
+    NSURL *url = [NSURL URLWithString:@"http://dpaste.com/api/v1/"];
     
-    // Wenn das Textfeld nicht leer ist
-    if([[textField string] length] > 0){
+    // POST-Content urlencoden
+    // @see http://simonwoodside.com/weblog/2009/4/22/how_to_really_url_encode/
+    NSString* encodedString = (NSString * )CFURLCreateStringByAddingPercentEscapes(
+                                                                                   NULL,
+                                                                                   (CFStringRef) text,
+                                                                                   NULL,
+                                                                                   (CFStringRef) @"!*'();:@&=+$,/?%#[]",
+                                                                                   kCFStringEncodingUTF8
+                                                                                   );
+    
+    // Post content aufbauen
+    NSString* postContent = @"content=";
+    postContent = [postContent stringByAppendingString: encodedString];
+    [encodedString release];
+    
+    // Request aufbauen und senden
+    ASIFormDataRequest *request = [[[ASIFormDataRequest alloc] initWithURL:url] autorelease];
+    [request addRequestHeader:@"User-Agent" value:@"dpasteGUI"];
+    [request setAllowCompressedResponse: (BOOL) YES];    
+    [request setPostBody: [postContent dataUsingEncoding:NSUTF8StringEncoding]];
+    [request setShouldRedirect: (BOOL) NO];
+    [request start];
+    
+    // Response
+    NSError *error = [request error];        
+    if (!error) {
+        // Url aus dem response auslesen und Anführungszeichen entfernen (piston bug?)
+        NSString *response = [[request responseHeaders] objectForKey:@"Location"];
+        [urlLabel setStringValue:response];
+        [urlLabel selectText: (id) clickOpenButton];
+        // Open Button aktivieren
+        [clickOpenButton setEnabled: (BOOL) YES];
         
-        // API Basepoint
-        NSURL *url = [NSURL URLWithString:@"http://dpaste.de/api/"];
-
-        // POST-Content urlencoden
-        // @see http://simonwoodside.com/weblog/2009/4/22/how_to_really_url_encode/
-        NSString* encodedString = (NSString * )CFURLCreateStringByAddingPercentEscapes(
-            NULL,
-            (CFStringRef) [textField string],
-            NULL,
-            (CFStringRef) @"!*'();:@&=+$,/?%#[]",
-            kCFStringEncodingUTF8
-    	);
-                                                                                    
-        // Post content aufbauen
-        NSString* postContent = @"content=";
-        postContent = [postContent stringByAppendingString: encodedString];
-        [encodedString release];
-                
-        // Request aufbauen und senden
-        ASIFormDataRequest *request = [[[ASIFormDataRequest alloc] initWithURL:url] autorelease];
-        [request addRequestHeader:@"User-Agent" value:@"dpasteGUI"];
-        [request setAllowCompressedResponse: (BOOL) YES];    
-        [request setPostBody: [postContent dataUsingEncoding:NSUTF8StringEncoding]];
-        [request start];
-                
-        // Response
-        NSError *error = [request error];        
-        if (!error) {
-            // Url aus dem response auslesen und Anführungszeichen entfernen (piston bug?)
-            NSString *response = [[request responseString] stringByReplacingOccurrencesOfString:@"\"" withString:@""];            
-            [urlLabel setStringValue:response];
-            [urlLabel selectText: (id) sender];
-            
-            // Open Button aktivieren
-            [clickOpenButton setEnabled: (BOOL) YES];
-        }else{
-            [urlLabel setStringValue: @"Request/Response Error with the API"];
-        }
-        
-	}else{
-        // Kein Text im Feld
-	    NSBeep();
+        // Paste in clipboard
+        NSPasteboard * pasteboard = [NSPasteboard generalPasteboard];
+        [pasteboard clearContents];
+        NSArray *objectsToCopy = [[NSArray alloc] initWithObjects: response, nil];
+        [pasteboard writeObjects:objectsToCopy];
+        NSBeep();
+    }else{
+        [urlLabel setStringValue: @"Request/Response Error with the API"];
     }
     
-    // Hide indicator
-    [progressDings stopAnimation: (NSButton*) sender];
-    [progressDings setHidden: (BOOL) YES];        
+    
 }
 @end
