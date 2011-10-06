@@ -10,4 +10,5 @@
 - (IBAction)sendText:(NSButton*)sender;
 - (IBAction)clickOpen:(NSButton*)sender;
 - (IBAction)openDocument:(id)sender;
+- (void) hotkeyWithEvent:(NSEvent *)hkEvent;
 @end

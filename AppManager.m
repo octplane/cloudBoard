@@ -1,6 +1,7 @@
 #import "AppManager.h"
 #import "ASIHTTPRequest.h"
 #import "ASIFormDataRequest.h"
+#import "DDHotKeyCenter.h"
 
 @implementation AppManager
 
@@ -15,6 +16,15 @@
         	[NSFont fontWithName:@"Monaco" size:11.0] forKey:NSFontAttributeName
      	]
     ];
+    NSLog(@"Registering hotkey");
+    
+	DDHotKeyCenter * c = [[DDHotKeyCenter alloc] init];
+	if (![c registerHotKeyWithKeyCode:9 modifierFlags:NSControlKeyMask target:self action:@selector(hotkeyWithEvent:) object:nil]) {
+		NSLog(@"Unable to register hotkey.");
+	} else {
+        NSLog(@"Registered: %@", [c registeredHotKeys]);
+	}
+	[c release];
 }
 
 // Redisplay the window after close and click on the dock icon
@@ -27,6 +37,10 @@
 // Do something if the app becomes active
 - (void) applicationWillBecomeActive:(NSNotification *)note{
  	//NSBeep();   
+}
+
+- (void) hotkeyWithEvent:(NSEvent *)hkEvent {
+    [urlLabel setStringValue: @"Mooh"];
 }
 
 // Open file dialog and load the text into the select box
@@ -97,7 +111,7 @@
         // Request aufbauen und senden
         ASIFormDataRequest *request = [[[ASIFormDataRequest alloc] initWithURL:url] autorelease];
         [request addRequestHeader:@"User-Agent" value:@"dpasteGUI"];
-        [request setAllowCompressedResponse: (BOOL) YES];        
+        [request setAllowCompressedResponse: (BOOL) YES];    
         [request setPostBody: [postContent dataUsingEncoding:NSUTF8StringEncoding]];
         [request start];
                 
