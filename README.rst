@@ -1,20 +1,17 @@
 =========
 dpasteGUI
 =========
+From Pierre Baillet.
+Forked from https://github.com/bartTC/dpasteGUI
 
-A simple graphical interface to quickly post snippets to the dpaste.de_
-pastebin.
+A system wide "^V" watcher that will copy textual content in the clipboard to dpaste.com. It then
+copies back the url to your clipboard and rings a bell. Press Action-V and get your url !
 
 Please note:
 ============
 
-I've written this app on day 3 in my Objective-C/Cocoa adventure. I'm usually a
-webdeveloper and there are some things I've never dealed with, such as memory
-allocation/delocation. So, if you have *any* hints or notices for me, please
-drop me an email: martin@mahner.org
 
 This app uses an external library ASIHTTPRequest_ so I don't need to hassle
 with the REST stuff.
 
 .. _ASIHTTPRequest: http://allseeing-i.com/ASIHTTPRequest/
-.. _dpaste.de: http://www.dpaste.de/
