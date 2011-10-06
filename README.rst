@@ -1,5 +1,5 @@
 =========
-dpasteGUI
+cloudBoard
 =========
 From Pierre Baillet.
 Forked from https://github.com/bartTC/dpasteGUI
@@ -13,5 +13,7 @@ Please note:
 
 This app uses an external library ASIHTTPRequest_ so I don't need to hassle
 with the REST stuff.
+
+Credit to Dave DeLong <http://www.davedelong.com> for the system wide keyboard shortcut management.
 
 .. _ASIHTTPRequest: http://allseeing-i.com/ASIHTTPRequest/
