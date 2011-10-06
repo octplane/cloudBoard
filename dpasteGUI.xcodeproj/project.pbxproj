@@ -11,6 +11,8 @@
 		026EA150143DA31000BC598B /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 026EA14F143DA31000BC598B /* libz.dylib */; };
 		026EA152143DA3AF00BC598B /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 026EA151143DA3AF00BC598B /* Carbon.framework */; };
 		026EA155143DA3D100BC598B /* DDHotKeyCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 026EA154143DA3D100BC598B /* DDHotKeyCenter.m */; };
+		029855FC143E06F5008473D9 /* cloudboard_selected.png in Resources */ = {isa = PBXBuildFile; fileRef = 029855FA143E06F5008473D9 /* cloudboard_selected.png */; };
+		029855FD143E06F5008473D9 /* cloudboard_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 029855FB143E06F5008473D9 /* cloudboard_normal.png */; };
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
 		5B1744810FEC1CA200EE270E /* ASIFormDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B17447A0FEC1CA200EE270E /* ASIFormDataRequest.m */; };
 		5B1744820FEC1CA200EE270E /* ASIHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B17447C0FEC1CA200EE270E /* ASIHTTPRequest.m */; };
@@ -30,6 +32,8 @@
 		026EA151143DA3AF00BC598B /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = SDKs/MacOSX10.6.sdk/System/Library/Frameworks/Carbon.framework; sourceTree = DEVELOPER_DIR; };
 		026EA153143DA3D100BC598B /* DDHotKeyCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDHotKeyCenter.h; sourceTree = "<group>"; };
 		026EA154143DA3D100BC598B /* DDHotKeyCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDHotKeyCenter.m; sourceTree = "<group>"; };
+		029855FA143E06F5008473D9 /* cloudboard_selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cloudboard_selected.png; sourceTree = "<group>"; };
+		029855FB143E06F5008473D9 /* cloudboard_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cloudboard_normal.png; sourceTree = "<group>"; };
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -72,11 +76,11 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				026EA153143DA3D100BC598B /* DDHotKeyCenter.h */,
-				026EA154143DA3D100BC598B /* DDHotKeyCenter.m */,
 				5B1744780FEC1CA200EE270E /* ASIHTTPRequest */,
 				5B920B510FEBC85700C4DCE5 /* AppManager.h */,
 				5B920B500FEBC85700C4DCE5 /* AppManager.m */,
+				026EA153143DA3D100BC598B /* DDHotKeyCenter.h */,
+				026EA154143DA3D100BC598B /* DDHotKeyCenter.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -135,6 +139,8 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				029855FA143E06F5008473D9 /* cloudboard_selected.png */,
+				029855FB143E06F5008473D9 /* cloudboard_normal.png */,
 				5B1745110FEC253E00EE270E /* icon.icns */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
@@ -218,6 +224,8 @@
 				1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */,
 				5B1744E30FEC20B800EE270E /* README.rst in Resources */,
 				5B1745120FEC253E00EE270E /* icon.icns in Resources */,
+				029855FC143E06F5008473D9 /* cloudboard_selected.png in Resources */,
+				029855FD143E06F5008473D9 /* cloudboard_normal.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

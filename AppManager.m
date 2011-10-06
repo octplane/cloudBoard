@@ -7,11 +7,20 @@
 
 -(void)awakeFromNib{
     
-    [window center];
-    [window setReleasedWhenClosed:NO];
+    //Used to detect where our files are
+    NSBundle *bundle = [NSBundle mainBundle];
     
-    NSLog(@"Registering hotkey");
+    //Allocates and loads the images into the application which will be used for our NSStatusItem
+    statusImage = [[NSImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cloudboard_normal" ofType:@"png"]];
+    statusHighlightImage = [[NSImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cloudboard_selected" ofType:@"png"]];
     
+    statusItem = [[[NSStatusBar systemStatusBar] statusItemWithLength:NSSquareStatusItemLength] retain];
+
+    [statusItem setImage:statusImage];
+    [statusItem setAlternateImage:statusHighlightImage];
+    [statusItem setMenu:statusMenu];
+    [statusItem setHighlightMode:YES];
+        
 	DDHotKeyCenter * c = [[DDHotKeyCenter alloc] init];
 	if (![c registerHotKeyWithKeyCode:9 modifierFlags:NSControlKeyMask target:self action:@selector(hotkeyWithEvent:) object:nil]) {
 		NSLog(@"Unable to register hotkey.");
@@ -19,13 +28,6 @@
         NSLog(@"Registered: %@", [c registeredHotKeys]);
 	}
 	[c release];
-}
-
-// Redisplay the window after close and click on the dock icon
-- (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag
-{
-    [window makeKeyAndOrderFront: (id) theApplication];
-    return flag;
 }
 
 // Do something if the app becomes active
@@ -43,21 +45,14 @@
     {
         NSArray *objectsToPaste = [pasteboard readObjectsForClasses:classArray options:options];
         NSString *text = [objectsToPaste objectAtIndex:0];
-        [progressDings setHidden: (BOOL) NO];
-        [progressDings startAnimation: (NSButton *)clickOpenButton];
         
         [self postText: text];
-        
-        // Hide indicator
-        [progressDings stopAnimation: (NSButton*) clickOpenButton];
-        [progressDings setHidden: (BOOL) YES];        
-        
     }
 }
 
-- (IBAction)clickOpen:(NSButton*)sender {
-    // Öffnet den Webbrowser mit der URL aus dem Textfeld
-    NSURL* url = [NSURL URLWithString: [urlLabel stringValue]];
+- (void)openLinkInMenu:(NSEvent *)event {
+    NSString * stringUrl = [[statusMenu highlightedItem] title];
+    NSURL* url = [NSURL URLWithString: stringUrl];
     [[NSWorkspace sharedWorkspace] openURL: url];
 }
 
@@ -93,21 +88,27 @@
     if (!error) {
         // Url aus dem response auslesen und Anführungszeichen entfernen (piston bug?)
         NSString *response = [[request responseHeaders] objectForKey:@"Location"];
-        [urlLabel setStringValue:response];
-        [urlLabel selectText: (id) clickOpenButton];
-        // Open Button aktivieren
-        [clickOpenButton setEnabled: (BOOL) YES];
         
         // Paste in clipboard
         NSPasteboard * pasteboard = [NSPasteboard generalPasteboard];
         [pasteboard clearContents];
+        if([statusMenu numberOfItems] > 10)
+        {
+            // Just before the last item
+            [statusMenu removeItemAtIndex:8];
+        }       
+        [[statusMenu insertItemWithTitle:response action:@selector(openLinkInMenu:) keyEquivalent:@"" atIndex:0] setTarget:self];
+        
         NSArray *objectsToCopy = [[NSArray alloc] initWithObjects: response, nil];
         [pasteboard writeObjects:objectsToCopy];
         NSBeep();
-    }else{
-        [urlLabel setStringValue: @"Request/Response Error with the API"];
+        [statusItem setImage:statusHighlightImage];
+        usleep(1000000);
+        [statusItem setImage:statusImage];
+        
     }
     
     
 }
+
 @end

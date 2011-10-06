@@ -1,12 +1,12 @@
 #import <Cocoa/Cocoa.h>
 
 @interface AppManager: NSObject {
-    IBOutlet NSProgressIndicator* progressDings;
-    IBOutlet NSTextField* urlLabel;
-    IBOutlet NSButton* clickOpenButton;
-    IBOutlet NSWindow* window;
+    IBOutlet NSMenu *statusMenu;
+    NSStatusItem * statusItem;
+    NSImage *statusImage;
+    NSImage *statusHighlightImage;
 }
-- (IBAction)clickOpen:(NSButton*)sender;
 - (void) hotkeyWithEvent:(NSEvent *)hkEvent;
 - (void)postText:(NSString *)text;
+- (void)openLinkInMenu:(NSEvent *)event;
 @end
