@@ -45,8 +45,11 @@
     {
         NSArray *objectsToPaste = [pasteboard readObjectsForClasses:classArray options:options];
         NSString *text = [objectsToPaste objectAtIndex:0];
-        
-        [self postText: text];
+        // Ignore multiple paste
+        if( ! [text hasPrefix: @"http://dpaste.com/"] )
+        {
+            [self postText: text];
+        }
     }
 }
 
@@ -94,7 +97,7 @@
         [pasteboard clearContents];
         if([statusMenu numberOfItems] > 10)
         {
-            // Just before the last item
+            // Just before the separator
             [statusMenu removeItemAtIndex:8];
         }       
         [[statusMenu insertItemWithTitle:response action:@selector(openLinkInMenu:) keyEquivalent:@"" atIndex:0] setTarget:self];
